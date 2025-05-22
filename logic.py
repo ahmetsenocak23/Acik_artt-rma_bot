@@ -105,6 +105,25 @@ class DatabaseManager:
 
         return cur.fetchone() # Changed to fetchone()
 
+    def get_winners_count(self, prize_id):
+        conn = sqlite3.connect(self.database)
+        with conn:
+            cur = conn.cursor()
+            cur.execute('''SELECT COUNT(*) 
+                        FROM winners 
+                        WHERE prize_id = ?;''', (prize_id, ))
+            return cur.fetchall()[0][0]
+   
+   
+    
+    def get_rating(self):
+        conn = sqlite3.connect(self.database)
+        with conn:
+            cur = conn.cursor()
+            cur.execute('''SELECT user_name, COUNT(*) AS prize_count FROM winners INNER JOIN users ON winnders.user_id = users.user_id GROUP BY user_name
+                        ORDER BY prize_count DESC 
+                        LIMIT 10; ''')
+            return cur.fetchall()
     
 def hide_img(img_name):
     image = cv2.imread(f'nexto/TUR-PythonLVL3-M4L1/img/{img_name}')
